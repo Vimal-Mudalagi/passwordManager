@@ -2,6 +2,7 @@ import React from 'react';
 import { useRef, useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { v4 as uuidv4 } from 'uuid';
 
 const Manager = () => {
     const ref = useRef()
@@ -12,13 +13,12 @@ const Manager = () => {
 
     useEffect(() => {
         let passwords = localStorage.getItem("passwords");
-       
+
         if (passwords) {
-            setpasswordArray(JSON.parse(passwords))
+            setpasswordArray(JSON.parse(passwords));
         }
+    }, []);
 
-
-    }, [])
 
     const copyText = (text) => {
         toast('🦄 Copied to clipboard!', {
@@ -30,8 +30,8 @@ const Manager = () => {
             draggable: true,
             progress: undefined,
             theme: "light",
-            
-            });
+
+        });
         navigator.clipboard.writeText(text)
     }
 
@@ -50,13 +50,64 @@ const Manager = () => {
 
 
 
+
     const savePassword = () => {
-        console.log(form)
-        setpasswordArray([...passwordArray, form])
-        localStorage.setItem("password", JSON.stringify([...passwordArray, form]))
-        console.log(passwordArray)
+        if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
+            setpasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
+            localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]));
+            console.log([...passwordArray, form]);
+            setform({ site: "", username: "", password: "" });
+            toast('Password saved!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        } else {
+            toast('Error: Password not saved!');
+        }
+    }
+
+
+
+
+    const deletePassword = (id) => {
+        console.log("Deleting password with id ", id)
+        let c = confirm("Do you really want to delete this password?")
+        if (c) {
+            setPasswordArray(passwordArray.filter(item => item.id !== id))
+            localStorage.setItem("passwords", JSON.stringify(passwordArray.filter(item => item.id !== id)))
+            toast('Password Deleted!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+        }
 
     }
+
+    const editPassword = (id) => {
+
+        console.log("Editing password with id ", id)
+        setform(passwordArray.filter(i => i.id === id)[0])
+        setPasswordArray(passwordArray.filter(item => item.id !== id))
+
+    }
+
+
+
+
+
+
 
     const handleChange = (e) => {
         setform({ ...form, [e.target.name]: e.target.value })
@@ -77,7 +128,7 @@ const Manager = () => {
                 pauseOnHover
                 theme="light"
                 transition="Bounce"
-                />
+            />
             {/* Same as */}
             <ToastContainer />
 
@@ -97,10 +148,23 @@ const Manager = () => {
 
                         <div className="relative">
 
-                            <input ref={passwordRef} value={form.password} onChange={handleChange} placeholder='Enter password' className='rounded-full border border-green-500 w-full p-10 py-2' type="password" name='password' />
+                            <form>
+                                <input
+                                    ref={passwordRef}
+                                    value={form.password}
+                                    onChange={handleChange}
+                                    placeholder='Enter password'
+                                    className='rounded-full border border-green-500 w-full p-10 py-2'
+                                    type="password"
+                                    name='password'
+                                    id='password'
+                                    autoComplete="new-password"
+                                />
+                            </form>
+
 
                             <span className='absolute right-0 top-0 cursor-pointer' onClick={showPassword}>
-                                <img ref={ref} className='p-2' width={40} src="icons/eye.png" alt="" />
+                                <img ref={ref} className='p-2' width={40} src="icons/eye.png" alt="eye" />
 
                             </span>
                         </div>
@@ -115,7 +179,7 @@ const Manager = () => {
                         // colors="primary:#ffffff"
                         >
                         </lord-icon>
-                        Add Password</button>
+                        Save Password</button>
 
                 </div>
                 <div className="passwords ">
@@ -127,6 +191,7 @@ const Manager = () => {
                                 <th className='py-2'>Site</th>
                                 <th className='py-2'>Username</th>
                                 <th className='py-2'>Passwords</th>
+                                <th className='py-2'>Actions</th>
                             </tr>
                         </thead>
                         <tbody className='bg-white'>
@@ -179,6 +244,24 @@ const Manager = () => {
                                             </div>
                                         </div>
                                     </td>
+
+                                    <td className='justify-center py-2 border border-white text-center'>
+                                        <span className='cursor-pointer mx-1' onClick={() => { editPassword(item.id) }}>
+                                            <lord-icon
+                                                src="https://cdn.lordicon.com/wuvorxbv.json"
+                                                trigger="hover"
+                                                style={{ "width": "25px", "height": "25px" }}>
+                                            </lord-icon>
+                                        </span>
+                                        <span className='cursor-pointer mx-1' onClick={() => { deletePassword(item.id) }}>
+                                            <lord-icon
+                                                src="https://cdn.lordicon.com/xekbkxul.json"
+                                                trigger="hover"
+                                                style={{ "width": "25px", "height": "25px" }}>
+                                            </lord-icon>
+                                        </span>
+                                    </td>
+
                                 </tr>
                             ))}
                         </tbody>
@@ -186,8 +269,9 @@ const Manager = () => {
                 </div>
             </div >
         </>
-    )
+    );
 }
+
 
 
 export default Manager
