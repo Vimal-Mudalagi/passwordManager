@@ -8,16 +8,16 @@ const Manager = () => {
     const ref = useRef()
     const passwordRef = useRef()
     const [form, setform] = useState({ site: "", username: "", password: "" })
-    const [passwordArray, setpasswordArray] = useState([])
+    const [passwordArray, setPasswordArray] = useState([])
+
 
 
     useEffect(() => {
         let passwords = localStorage.getItem("passwords");
-
         if (passwords) {
-            setpasswordArray(JSON.parse(passwords));
+            setPasswordArray(JSON.parse(passwords))
         }
-    }, []);
+    }, [])
 
 
     const copyText = (text) => {
@@ -44,7 +44,7 @@ const Manager = () => {
         }
         else {
             ref.current.src = "icons/eyehide.png"
-            passwordRef.current.type = ""
+            passwordRef.current.type = "text"
         }
     }
 
@@ -53,10 +53,11 @@ const Manager = () => {
 
     const savePassword = () => {
         if (form.site.length > 3 && form.username.length > 3 && form.password.length > 3) {
-            setpasswordArray([...passwordArray, { ...form, id: uuidv4() }]);
-            localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]));
-            console.log([...passwordArray, form]);
-            setform({ site: "", username: "", password: "" });
+
+            setPasswordArray([...passwordArray, { ...form, id: uuidv4() }])
+            localStorage.setItem("passwords", JSON.stringify([...passwordArray, { ...form, id: uuidv4() }]))
+            console.log([...passwordArray, form])
+            setform({ site: "", username: "", password: "" })
             toast('Password saved!', {
                 position: "top-right",
                 autoClose: 5000,
@@ -67,13 +68,12 @@ const Manager = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        } else {
+        }
+        else {
             toast('Error: Password not saved!');
         }
+
     }
-
-
-
 
     const deletePassword = (id) => {
         console.log("Deleting password with id ", id)
@@ -94,7 +94,6 @@ const Manager = () => {
         }
 
     }
-
     const editPassword = (id) => {
 
         console.log("Editing password with id ", id)
@@ -102,6 +101,7 @@ const Manager = () => {
         setPasswordArray(passwordArray.filter(item => item.id !== id))
 
     }
+
 
 
 
@@ -135,16 +135,16 @@ const Manager = () => {
 
 
             <div className="absolute inset-0 -z-10 h-full w-full items-center px-5 py-24 [background:radial-gradient(125%_125%_at_50%_10%,#000_40%,#63e_100%)]"></div>
-            <div className="p-2 md:p-0 md:mycontainer">
+            <div className="p-2 pt-3  md:mycontainer min-h-[70vh]">
                 <h1 className=' text-white text-4xl font-bold text-center'><span className='text-green-500'>&lt;</span>
                     password
                     <span className='text-green-500'>Manager/&gt;</span></h1>
                 <p className='text-white text-2xl py-4 text-center'>Your Own Password Manager</p>
 
                 <div className="text-black flex flex-col p-4 gap-5 items-center">
-                    <input value={form.site} onChange={handleChange} placeholder='Enter the website URL' className='rounded-full border border-green-500 w-full p-4 py-2' type="text" name='site' id='site'/>
+                    <input value={form.site} onChange={handleChange} placeholder='Enter the website URL' className='rounded-full border border-green-500 w-full p-4 py-2' type="text" name='site' id='site' />
                     <div className="flex flex-col md:flex-row w-full justify-between gap-3">
-                        <input value={form.username} onChange={handleChange} placeholder='Enter username' className='rounded-full border border-green-500 w-full p-4 py-2' type="text" name='username' id='username'/>
+                        <input value={form.username} onChange={handleChange} placeholder='Enter username' className='rounded-full border border-green-500 w-full p-4 py-2' type="text" name='username' id='username' />
 
                         <div className="relative">
 
@@ -185,7 +185,7 @@ const Manager = () => {
                 <div className="passwords ">
                     <h2 className='font-bold text-2xl py-4 text-white'>Your Passwords</h2>
                     {passwordArray.length === 0 && <div className='text-white'>No passwords to show</div>}
-                    {passwordArray.length != 0 && <table className="table-auto w-full rounded-md overflow-hidden ">
+                    {passwordArray.length != 0 && <table className="table-auto w-full rounded-md overflow-hidden mb-10">
                         <thead className='bg-green-800 text-white' >
                             <tr>
                                 <th className='py-2'>Site</th>
