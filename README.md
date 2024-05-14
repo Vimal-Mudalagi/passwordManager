@@ -1,6 +1,7 @@
 # Password Manager
 
 **Password Manager** is a web application built with React, Vite, Tailwind CSS, and utilizes local storage to securely save and manage passwords. It offers a simple and intuitive interface for storing, editing, copying, and deleting passwords.
+![passmanager](https://github.com/Vimal-Mudalagi/passwordManager/assets/134709589/6c027641-f04a-4f35-bed8-9450641c9a63)
 
 ## Features
 
